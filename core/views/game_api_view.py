@@ -1,33 +1,36 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.models import Game
-from core.serializers.game import GameSerializer
+from app.bussines.game_manager import GameManager
+from app.data_access.game_dao import GameDAO
 
 
 class GameAPIView(APIView):
-    @staticmethod
-    def get(request):
-        games = Game.objects.all()
-        serializer = GameSerializer(games, many=True)
-        return Response(serializer.data)
 
-    @staticmethod
-    def post(request):
-        serializer = GameSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.DAO = GameDAO()
 
-    @staticmethod
-    def put(request):
+    def get(self, request):
+        return Response(self.DAO.get_all())
+
+    # def post(self, request):
+    #     return Response(self.DAO.create(request.data))
+
+    def patch(self, request):
         try:
-            query = Game.objects.get(name=request.data.get('name'))
-        except Game.DoesNotExist:
-            return Response({'error': 'Not found : {}'.format(request.data.get('name'))},
+            GameManager(request.data.get("is_update"))
+            return Response({})
+        except Exception as e:
+            return Response({'error': '{}'.format(e)},
                             status=status.HTTP_400_BAD_REQUEST)
-        serializer = GameSerializer(query, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+
+    # def put(self, request):
+    #     query = self.DAO.get_by_name(request.data.get('name'))
+    #     if query is None:
+    #         return Response({'error': 'Not found : {}'.
+    #                         format(request.data.get('name'))},
+    #                         status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     return Response(self.DAO.update(query, request.data))
 

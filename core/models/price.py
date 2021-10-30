@@ -8,7 +8,4 @@ class Price(models.Model):
     original = models.CharField(max_length=10, null=False)
     discount_fmt = models.CharField(max_length=15, null=False)
     original_fmt = models.CharField(max_length=15, null=False)
-    createdAt = models.DateTimeField(default=datetime.datetime.now)
-
-    def __str__(self):
-        return self.discount, self.original, self.discount_fmt, self.original_fmt, self.createdAt
+    created_at = models.DateTimeField(default=datetime.datetime.now)

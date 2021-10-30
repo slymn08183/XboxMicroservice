@@ -16,9 +16,12 @@ class Game(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300, unique=True, blank=False, null=False)
     thumbnail = models.CharField(max_length=2000, blank=False, null=False)
-    releaseDate = models.DateTimeField(null=False)
-    createdAt = models.DateTimeField(default=datetime.datetime.now)
-    isDeleted = models.BooleanField(default=0)
+    release_date = models.DateTimeField(null=False)
+    created_at = models.DateTimeField(default=datetime.datetime.now)
+    is_deleted = models.BooleanField(default=0)
+    store_url = models.TextField()
+    locale_code = models.CharField(max_length=20, blank=False, null=False)
+    country_code = models.CharField(max_length=20, blank=False, null=False)
 
     description = models.ForeignKey(
         Description, on_delete=models.CASCADE, null=True
