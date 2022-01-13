@@ -70,6 +70,9 @@ def get_game_xbox_loop(all_game_ids_xbox_, _locale, _country, is_update):
             print('\t\t' + err.game_id)
         except GameCore.DoesNotExist:
             dao.create(get_game_data_xbox(_locale, _country, str(id_)))
+        except Exception as e:
+            print(e)
+            raise e
         print('\n')
 
         page_data_failed_ids_xbox.close()
@@ -96,21 +99,21 @@ def get_game_data_xbox(_locale, _country, xbox_id):
     identifier = xbox_id
 
     developers = data['Products'][0]['LocalizedProperties'][0]['DeveloperName'].split("|")
-    developers = developers if len(developers[0]) > 0 else ["null"]
+    developers = developers if len(developers[0]) > 0 else None
     publishers = data['Products'][0]['LocalizedProperties'][0]['PublisherName'].split("|")
-    publishers = publishers if len(publishers[0]) > 0 else ["null"]
+    publishers = publishers if len(publishers[0]) > 0 else None
 
     pic_urls = ['https:' + json_obj['Uri'] for json_obj in data['Products'][0]['LocalizedProperties'][0]['Images']
                 if json_obj['ImagePurpose'] == "Screenshot"]
-    pic_urls = pic_urls if len(pic_urls[0]) > 0 else ["null"]
+    pic_urls = pic_urls if len(pic_urls[0]) > 0 else None
 
     thumbnail = 'https:{}'.format("".join(json_obj['Uri'] for json_obj in
                                           data['Products'][0]['LocalizedProperties'][0]['Images']
                                           if json_obj['ImagePurpose'] == "Poster"))
 
-    thumbnail = thumbnail if len(thumbnail) > 0 else "null"
+    thumbnail = thumbnail if len(thumbnail) > 0 else None
     # print(thumbnail)
-    vid_urls = ['null']
+    vid_urls = None
 
     tmp_name = data['Products'][0]['LocalizedProperties'][0]['ShortTitle']
     if tmp_name != "":
@@ -120,11 +123,10 @@ def get_game_data_xbox(_locale, _country, xbox_id):
 
     short_desc = data['Products'][0]['LocalizedProperties'][0]['ShortDescription']
     long_desc = data['Products'][0]['LocalizedProperties'][0]['ProductDescription']
-    short_desc = short_desc if len(short_desc) > 0 else "null"
-    long_desc = long_desc if len(long_desc) > 0 else "null"
+    short_desc = short_desc if len(short_desc) > 0 else None
+    long_desc = long_desc if len(long_desc) > 0 else None
 
-    release_date = datetime.strptime(data['Products'][0]['MarketProperties'][0]['OriginalReleaseDate']
-                                     .split(':')[0], "%Y-%m-%dT%H")
+    release_date = data['Products'][0]['MarketProperties'][0]['OriginalReleaseDate'].split(':')[0]
 
     genres = data['Products'][0]['Properties']['Categories']
 
@@ -139,16 +141,14 @@ def get_game_data_xbox(_locale, _country, xbox_id):
         for i in genres:
             genres[genres.index(i)] = genres[genres.index(i)].upper().replace(' ', '')
 
-    genres = genres if len(genres[0]) > 0 else ["null"]
+    genres = genres if len(genres[0]) > 0 else None
 
     store_url = "https://www.microsoft.com/{}-{}/p/x/{}".format(_locale, _country, xbox_id)
 
-    title_specs = ['null']
-    min_specs = ['null']
-    rec_specs = ['null']
-
-    price = [-1, -1, "XBOX", "XBOX"]
-    price = price
+    title_specs = None
+    min_specs = None
+    rec_specs = None
+    price = None
 
     return Game(
         name=name,
