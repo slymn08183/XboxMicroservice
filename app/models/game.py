@@ -4,12 +4,18 @@ class Game:
                  min_specs, rec_specs, title_specs, vid_urls,
                  pic_urls, store_url: str, locale, country: str):
 
-        _specification = {
-            'min': None if title_specs is None else
-            ";".join('{}: {}'.format(y, x) for y, x in zip(title_specs[0:], min_specs[0:])),
-            'max': None if rec_specs is None else
-            ";".join('{}: {}'.format(y, x) for y, x in zip(title_specs[0:], rec_specs[0:]))
-        }
+        if title_specs is not None:
+            _specification = {
+                'min': None if min_specs is None else
+                ";".join('{}: {}'.format(y, x) for y, x in zip(title_specs[0:], min_specs[0:])),
+                'max': None if rec_specs is None else
+                ";".join('{}: {}'.format(y, x) for y, x in zip(title_specs[0:], rec_specs[0:]))
+            }
+        else:
+            _specification = {
+                'min': None,
+                'max': None
+            }
 
         _price = {
             'discount': None,
